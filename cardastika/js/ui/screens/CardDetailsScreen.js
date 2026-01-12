@@ -49,12 +49,7 @@ export const CardDetailsScreen = (cardId, options = {}) => {
   weakerSection.appendChild(weakerList);
   screen.appendChild(weakerSection);
 
-  // Action buttons (stub)
-  const actions = dom.create('div', { className: 'card-actions' }, [
-    dom.create('button', { className: 'action-btn add-btn' }, ['Додати в колоду']),
-    dom.create('button', { className: 'action-btn remove-btn' }, ['Видалити'])
-  ]);
-  screen.appendChild(actions);
+
 
   return screen;
 };

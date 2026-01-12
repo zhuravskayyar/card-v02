@@ -1,6 +1,83 @@
 // Card view component - STEAMPUNK STYLE
+
 import dom from '../../core/dom.js';
 import { ELEMENT_INFO } from '../../data/elements.js';
+
+// PATCH: rarity normalization for all render paths
+function normalizeRarity(raw) {
+  if (raw == null) return { rClass: "R1", text: "common" };
+
+  const s = String(raw).trim().toLowerCase();
+
+  // If already R1..R6
+  const m = s.match(/^r([1-6])$/);
+  if (m) {
+    const n = Number(m[1]);
+    return {
+      rClass: `R${n}`,
+      text: ["common","uncommon","rare","epic","legendary","mythic"][n - 1]
+    };
+  }
+
+  // If numeric 1..6
+  const num = Number(s);
+  if (Number.isFinite(num) && num >= 1 && num <= 6) {
+    const n = Math.floor(num);
+    return {
+      rClass: `R${n}`,
+      text: ["common","uncommon","rare","epic","legendary","mythic"][n - 1]
+    };
+  }
+
+  // Text aliases
+  const map = {
+    common: { rClass: "R1", text: "common" },
+    r1: { rClass: "R1", text: "common" },
+
+    uncommon: { rClass: "R2", text: "uncommon" },
+    r2: { rClass: "R2", text: "uncommon" },
+
+    rare: { rClass: "R3", text: "rare" },
+    r3: { rClass: "R3", text: "rare" },
+
+    epic: { rClass: "R4", text: "epic" },
+    purple: { rClass: "R4", text: "epic" },
+    r4: { rClass: "R4", text: "epic" },
+
+    legendary: { rClass: "R5", text: "legendary" },
+    legend: { rClass: "R5", text: "legendary" },
+    gold: { rClass: "R5", text: "legendary" },
+    r5: { rClass: "R5", text: "legendary" },
+
+    mythic: { rClass: "R6", text: "mythic" },
+    red: { rClass: "R6", text: "mythic" },
+    r6: { rClass: "R6", text: "mythic" },
+  };
+
+  return map[s] || { rClass: "R1", text: "common" };
+}
+
+function applyRarity(el, card) {
+  const raw =
+    card?.rarity ??
+    card?.rarityId ??
+    card?.rarity_id ??
+    card?.tier ??
+    card?.rank ??
+    card?.rarityKey;
+
+  const { rClass, text } = normalizeRarity(raw);
+
+  // remove any previous rarity classes to avoid conflicts
+  el.classList.remove(
+    "R1","R2","R3","R4","R5","R6",
+    "common","uncommon","rare","epic","legendary","mythic"
+  );
+
+  el.classList.add(rClass);
+  el.classList.add(text);              // optional, but useful for readability/debug
+  el.dataset.rarity = text;            // data-rarity="mythic" etc
+}
 
 // Маппінг стихій на SVG іконки (стимпанк-стиль)
 const ELEMENT_ICONS = {
@@ -22,6 +99,7 @@ export const createCardView = (card, options = {}) => {
   if (selected) classes.push('selected');
   if (disabled) classes.push('disabled');
 
+
   const cardEl = dom.create('div', {
     className: classes.join(' '),
     'data-id': card.id,
@@ -30,6 +108,9 @@ export const createCardView = (card, options = {}) => {
       if (!disabled) onClick(card);
     }
   });
+
+  // PATCH: ensure rarity is always applied (even in fallback rendering)
+  applyRarity(cardEl, card);
 
   // Only element icon (SVG) and power
   const elementIcon = ELEMENT_ICONS[card.element] || ELEMENT_ICONS.fire;

@@ -205,9 +205,9 @@ for (let factionNum = 1; factionNum <= 40; factionNum++) {
       element: element,
       faction: factionId,
       factionName: factionName,
-      // Сохраняем совместимость: `rarity` — строковое имя (common/uncommon/...)
-      rarity: rarityData.name,
-      rarityId: rarityId,
+      // Явно присвоюємо rarity для кожної карти (важливо для CSS-рамок)
+      rarity: rarityData.name, // "common", "uncommon", ...
+      rarityId: rarityId,      // "R1".."R6"
       rarityName: rarityData.name,
       rarityDisplay: rarityData.displayName,
       basePower: finalPower,
