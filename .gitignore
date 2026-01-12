@@ -1,0 +1,48 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.lnk
+
+# IDE / Editor
+.vscode/
+.idea/
+*.suo
+*.user
+*.cache
+
+# Logs and env
+*.log
+.env
+.secrets/
+
+# Build / output
+dist/
+build/
+out/
+coverage/
+
+# Misc
+*.sqlite
+local.settings.json
+
+# Allow project files except personal secrets
+!.env.example
