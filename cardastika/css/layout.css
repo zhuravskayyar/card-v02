@@ -9,7 +9,53 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-ui);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* ===== Typography system (Pack A) ===== */
+/* Titles / headings / short labels */
+h1, h2, h3,
+.page-title, .modal-title, .card-title {
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Numbers: power / level / XP / currencies */
+.card-power-value,
+.power-value,
+.hud-level,
+.meters,
+.level,
+.hud-xp,
+.hud-xp-row__label {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* Mobile-first sizes (425px target) */
+.hud-level { font-size: 14px; font-weight: 600; }
+.meters { font-size: 12px; }
+.hud-xp-row__label { font-size: 11px; }
+
+.card-title { font-size: 13px; line-height: 1.15; }
+.card-power-value { font-size: 20px; }
+
+.modal-body,
+.task-desc,
+.card-desc { font-size: 13px; line-height: 1.45; }
+
+/* Desktop tuning */
+@media (min-width: 768px){
+  .page-title { font-size: 22px; }
+  .card-title { font-size: 15px; }
+  .card-power-value { font-size: 22px; }
+  .modal-body { font-size: 14px; }
+}
 }
 
 /* Make sizing predictable */
