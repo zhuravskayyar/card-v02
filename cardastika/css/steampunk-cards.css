@@ -2,7 +2,7 @@
 .duel-deck.mobile-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: auto auto; /* allow rows to size to content to avoid stretching */
   gap: 8px; /* базово, половина від deck-grid */
   justify-items: center;
   align-items: center;
@@ -24,9 +24,11 @@
   width: 100%;
   max-width: 120px;
   aspect-ratio: 3/4;
-  height: calc(100% - 5px);
+  height: auto; /* let aspect-ratio determine height */
   margin: 0;
   position: relative;
+  align-self: center;
+  justify-self: center;
 }
 
 .card-multiplier {
