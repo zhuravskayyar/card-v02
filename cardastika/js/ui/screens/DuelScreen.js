@@ -172,16 +172,14 @@ export const DuelScreen = () => {
   const arena = dom.create('div', { className: 'duel-arena' });
   screen.appendChild(arena);
 
-  // Player deck
-  const playerDeckEl = dom.create('div', { className: 'duel-deck' });
-  arena.appendChild(playerDeckEl);
 
-  // VS
+  // --- MOBILE GRID STYLE ---
+  // Використовуємо сітку як у DeckScreen, але без другого ряду, зменшена відстань, з множником
+  const playerDeckEl = dom.create('div', { className: 'duel-deck mobile-grid' });
+  arena.appendChild(playerDeckEl);
   const vs = dom.create('div', { className: 'duel-vs' }, ['⚔️']);
   arena.appendChild(vs);
-
-  // Enemy deck
-  const enemyDeckEl = dom.create('div', { className: 'duel-deck' });
+  const enemyDeckEl = dom.create('div', { className: 'duel-deck mobile-grid' });
   arena.appendChild(enemyDeckEl);
 
   // Log
@@ -199,30 +197,31 @@ export const DuelScreen = () => {
     // Update header
     updateDuelHeader(header, state);
 
-    // Update player deck
+
+    // --- MOBILE GRID STYLE ---
+    // Вирізаємо другий ряд (позиції 3,4,5), залишаємо 6 карт (0,1,2,6,7,8)
+    const playerGridCards = [0,1,2,6,7,8].map(i => currentDuel.playerDeck[i]).filter(Boolean);
+    const enemyGridCards = [0,1,2,6,7,8].map(i => currentDuel.enemyDeck[i]).filter(Boolean);
     dom.clear(playerDeckEl);
-    currentDuel.playerDeck.forEach((card, index) => {
+    dom.clear(enemyDeckEl);
+    playerGridCards.forEach((card, idx) => {
+      // Множник: рахуємо скільки карт з таким id у колоді (на випадок дублікатів)
+      const count = currentDuel.playerDeck.filter(c => c.id === card.id).length;
       const cardEl = createCardView(card, {
         selected: state.currentPlayerCard?.id === card.id,
         disabled: state.state !== DUEL_STATES.PLAYER_TURN,
         onClick: () => {
           if (state.state === DUEL_STATES.PLAYER_TURN) {
-            currentDuel.selectPlayerCard(index);
+            currentDuel.selectPlayerCard(idx);
             showToast.info(`Вибрано ${card.name}`);
-            
-            // Auto-select enemy card and resolve
             setTimeout(() => {
               currentDuel.selectEnemyCard();
               render();
-              
               setTimeout(() => {
                 const result = currentDuel.resolveCurrentRound();
                 render();
-                
                 if (result.duelEnded) {
-                  setTimeout(() => {
-                    endDuel();
-                  }, 1500);
+                  setTimeout(() => { endDuel(); }, 1500);
                 } else {
                   currentDuel.nextRound();
                   render();
@@ -232,15 +231,50 @@ export const DuelScreen = () => {
           }
         }
       });
+      // Додаємо множник, якщо карт більше однієї
+      if (count > 1) {
+        const mult = dom.create('div', {
+          className: 'card-multiplier',
+          style: {
+            position: 'absolute',
+            top: '6px',
+            right: '10px',
+            background: 'rgba(0,0,0,0.7)',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '2px 10px',
+            fontSize: '1.1rem',
+            fontWeight: 'bold',
+            zIndex: 2
+          }
+        }, [`×${count}`]);
+        cardEl.appendChild(mult);
+      }
       playerDeckEl.appendChild(cardEl);
     });
-
-    // Update enemy deck
-    dom.clear(enemyDeckEl);
-    currentDuel.enemyDeck.forEach(card => {
+    enemyGridCards.forEach((card, idx) => {
+      const count = currentDuel.enemyDeck.filter(c => c.id === card.id).length;
       const cardEl = createCardView(card, {
         selected: state.currentEnemyCard?.id === card.id
       });
+      if (count > 1) {
+        const mult = dom.create('div', {
+          className: 'card-multiplier',
+          style: {
+            position: 'absolute',
+            top: '6px',
+            right: '10px',
+            background: 'rgba(0,0,0,0.7)',
+            color: '#fff',
+            borderRadius: '12px',
+            padding: '2px 10px',
+            fontSize: '1.1rem',
+            fontWeight: 'bold',
+            zIndex: 2
+          }
+        }, [`×${count}`]);
+        cardEl.appendChild(mult);
+      }
       enemyDeckEl.appendChild(cardEl);
     });
 
