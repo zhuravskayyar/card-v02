@@ -31,6 +31,32 @@
   justify-self: center;
 }
 
+/* Arrange duel cards into top and bottom rows (leave middle row empty) */
+.duel-deck,
+.duel-deck.mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto auto; /* top, middle (empty), bottom */
+  gap: 8px;
+  justify-items: center;
+  align-items: center;
+}
+
+.duel-deck .sp-card:nth-child(1) { grid-column: 1; grid-row: 1; }
+.duel-deck .sp-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+.duel-deck .sp-card:nth-child(3) { grid-column: 3; grid-row: 1; }
+.duel-deck .sp-card:nth-child(4) { grid-column: 1; grid-row: 3; }
+.duel-deck .sp-card:nth-child(5) { grid-column: 2; grid-row: 3; }
+.duel-deck .sp-card:nth-child(6) { grid-column: 3; grid-row: 3; }
+
+/* Mirror rules for mobile-grid selector as well */
+.duel-deck.mobile-grid .sp-card:nth-child(1) { grid-column: 1; grid-row: 1; }
+.duel-deck.mobile-grid .sp-card:nth-child(2) { grid-column: 2; grid-row: 1; }
+.duel-deck.mobile-grid .sp-card:nth-child(3) { grid-column: 3; grid-row: 1; }
+.duel-deck.mobile-grid .sp-card:nth-child(4) { grid-column: 1; grid-row: 3; }
+.duel-deck.mobile-grid .sp-card:nth-child(5) { grid-column: 2; grid-row: 3; }
+.duel-deck.mobile-grid .sp-card:nth-child(6) { grid-column: 3; grid-row: 3; }
+
 .card-multiplier {
   position: absolute;
   top: 6px;
