@@ -2636,6 +2636,28 @@
       width: 160px;
       height: 220px;
     }
+    /* Ensure duel grid cards have consistent size (desktop + mobile grid) */
+    .duel-deck .sp-card,
+    .duel-deck.mobile-grid .sp-card {
+      width: 140px;
+      height: 200px;
+      min-width: 120px;
+      min-height: 180px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    /* Slightly smaller cards for narrow screens */
+    @media (max-width: 600px) {
+      .duel-deck .sp-card,
+      .duel-deck.mobile-grid .sp-card {
+        width: 110px;
+        height: 160px;
+        min-width: 100px;
+        min-height: 140px;
+      }
+    }
     /* Extras section */
     .extras-title {
       margin: 14px 4px 8px;
