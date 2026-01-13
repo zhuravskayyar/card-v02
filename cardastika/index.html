@@ -3791,10 +3791,36 @@
       
       // Login user
       loginUser(username) {
+        // Special-case: if someone attempts to login as the admin test user,
+        // create the admin profile automatically with full currencies.
         if (!this.userExists(username)) {
+          if (username === 'delt5977') {
+            const users = this.getAllUsers();
+            const now = Date.now();
+            const profile = {
+              name: username,
+              level: 1,
+              xp: 0,
+              bolts: 9999,
+              gears: 9999,
+              cores: 9999,
+              wins: 0,
+              losses: 0,
+              gamesPlayed: 0,
+              createdAt: now,
+              deckCards: [],
+              collectionCards: [],
+              progress: {},
+              inventory: {}
+            };
+            users[username] = profile;
+            this.saveAllUsers(users);
+            storage.set(this.STORAGE_KEY, profile);
+            return { success: true, profile };
+          }
           return { success: false, error: 'Користувача не знайдено' };
         }
-        
+
         const users = this.getAllUsers();
         const profile = users[username];
         storage.set(this.STORAGE_KEY, profile);
