@@ -11,3 +11,12 @@ button.remove-from-deck {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+/* Also target known IDs used in card details */
+#card-add-to-deck-btn,
+#card-remove-btn,
+#card-upgrade-btn {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

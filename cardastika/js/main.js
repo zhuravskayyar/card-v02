@@ -234,7 +234,7 @@ if (typeof window !== 'undefined') {
 // === FORCE REMOVE DECK BUTTONS (GLOBAL) ===
 function forceRemoveDeckButtons(root = document) {
   root.querySelectorAll(
-    ".card-actions, .btn-add, .btn-remove, button[data-action='add'], button[data-action='remove']"
+    ".card-actions, .btn-add, .btn-remove, button[data-action='add'], button[data-action='remove'], #card-add-to-deck-btn, #card-remove-btn, #card-upgrade-btn"
   ).forEach(el => el.remove());
 }
 
