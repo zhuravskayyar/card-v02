@@ -11,6 +11,34 @@
 
     const now = Date.now();
 
+    // Build starter deck similar to in-app registration logic
+    const starterIds = (window.getRandomStarterCardIds && window.getRandomStarterCardIds(16))
+      || (window.getStarterCardIds && window.getStarterCardIds())
+      || [];
+    const pool = starterIds.length ? starterIds : (window.ALL_CARDS || []).map(c => c.id);
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const selectedIds = shuffled.slice(0, 16);
+    const selectedCards = selectedIds
+      .map(id => (window.getCardById ? window.getCardById(id) : null))
+      .filter(Boolean);
+
+    const deckCards = selectedCards.slice(0, 9).map(card => ({ id: card.id, level: 1 }));
+    const collectionCards = selectedCards.slice(9, 16).map(card => ({ id: card.id, level: 1 }));
+
+    const progress = {};
+    selectedCards.forEach(card => {
+      progress[card.id] = { level: 1, xp: 0 };
+    });
+
+    const inventory = {};
+    selectedCards.forEach(card => {
+      inventory[card.id] = (inventory[card.id] || 0) + 1;
+    });
+
     const adminProfile = {
       name: username,
       level: 1,
@@ -22,10 +50,10 @@
       losses: 0,
       gamesPlayed: 0,
       createdAt: now,
-      deckCards: [],
-      collectionCards: [],
-      progress: {},
-      inventory: {}
+      deckCards: deckCards,
+      collectionCards: collectionCards,
+      progress: progress,
+      inventory: inventory
     };
 
     // Read existing users map
