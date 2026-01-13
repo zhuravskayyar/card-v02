@@ -16,10 +16,30 @@ let autoPlayInterval = null;
 export const DuelScreen = () => {
   const screen = dom.create('div', { className: 'screen duel-screen' });
 
-  // Get player deck from store
+  // Get player deck from store or from user profile instances (preferred)
   let playerDeck = store.get('deck');
-  if (!playerDeck || playerDeck.length !== 9) {
-    playerDeck = balanceDeck(CARDS, 9);
+  try {
+    const profile = (typeof window !== 'undefined' && window.userProfile) ? window.userProfile.getProfile() : null;
+    if (profile && Array.isArray(profile.deckCards) && profile.deckCards.length === 9) {
+      // Map each deck instance to a full card object, preserving uid, level and computed power
+      playerDeck = profile.deckCards.map(dc => {
+        const id = dc.cardId || dc.id;
+        const base = CARDS.find(c => c.id === id) || null;
+        if (!base) return Object.assign({}, dc);
+        const copy = Object.assign({}, base);
+        copy.uid = dc.uid || copy.uid || null;
+        copy.level = dc.level || copy.level || 1;
+        // compute power using global getPower if available
+        const computed = (typeof window !== 'undefined' && window.getPower) ? window.getPower(base, copy.level) : (dc.power || base.basePower || base.attack || 0);
+        copy.power = computed;
+        copy.attack = computed;
+        return copy;
+      });
+    } else if (!playerDeck || playerDeck.length !== 9) {
+      playerDeck = balanceDeck(CARDS, 9);
+    }
+  } catch (e) {
+    if (!playerDeck || playerDeck.length !== 9) playerDeck = balanceDeck(CARDS, 9);
   }
 
   // Generate enemy deck adapted to player total power: target = playerTotal +/-100
