@@ -24,6 +24,7 @@
   width: 100%;
   max-width: 120px;
   aspect-ratio: 3/4;
+  height: calc(100% - 5px);
   margin: 0;
   position: relative;
 }
