@@ -35,6 +35,32 @@ function migrateDeckToInstances(profile) {
   });
   if (Array.isArray(profile.deckCards)) profile.deckCards = fixUIDs(profile.deckCards);
   if (Array.isArray(profile.collectionCards)) profile.collectionCards = fixUIDs(profile.collectionCards);
+
+  // 4) Видалити дублікати в колоді (по cardId), залишаючи найсильніші інстанси
+  if (Array.isArray(profile.deckCards)) {
+    const byCardId = new Map();
+    profile.deckCards.forEach((c) => {
+      const key = c.cardId || c.id;
+      if (!key) return;
+      const existing = byCardId.get(key);
+      if (!existing) {
+        byCardId.set(key, c);
+        return;
+      }
+      // Вибираємо кращу інстанцію: вищий level, потім більший xp, потім більша power
+      const aScore = (c.level || 0) * 1000000 + (c.xp || 0) * 1000 + (c.power || 0);
+      const bScore = (existing.level || 0) * 1000000 + (existing.xp || 0) * 1000 + (existing.power || 0);
+      if (aScore > bScore) byCardId.set(key, c);
+    });
+    // Зберігаємо максимум 9 карт у колоді, в порядку найкращих по рейтингу
+    const entries = Array.from(byCardId.values());
+    entries.sort((x, y) => {
+      const sx = (x.level || 0) * 1000000 + (x.xp || 0) * 1000 + (x.power || 0);
+      const sy = (y.level || 0) * 1000000 + (y.xp || 0) * 1000 + (y.power || 0);
+      return sy - sx;
+    });
+    profile.deckCards = entries.slice(0, 9);
+  }
   return profile;
 }
 // === PATCH: генератор uid та createCardInstance ===
