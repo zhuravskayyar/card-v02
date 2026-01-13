@@ -79,7 +79,7 @@ button.remove-from-deck {
 /* 1) Єдині змінні розміру */
 :root{
   --card-width: 128px;   /* МІНЯЙ ТІЛЬКИ ЦЕ */
-  --card-height: 180px;  /* І ЦЕ */
+  --card-height: 160px;  /* І ЦЕ */
   --card-radius: 16px;
 }
 
