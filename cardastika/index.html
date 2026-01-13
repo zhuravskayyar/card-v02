@@ -3904,22 +3904,34 @@
 
         if (!profile.deckCards) profile.deckCards = [];
 
-        // Ensure we work with a proper card instance (with uid and cardId)
-        let inst;
-        if (cardEntry && (cardEntry.uid || cardEntry.cardId) && cardEntry.cardId) {
-          inst = {
-            uid: cardEntry.uid || genUID('card'),
-            cardId: cardEntry.cardId || cardEntry.id,
-            level: cardEntry.level || 1,
-            xp: cardEntry.xp || 0,
-            power: cardEntry.power || 0
+        // Ensure we work with a proper card instance (with uid and cardId).
+        // Use global `createCardInstance` when available; otherwise fall back
+        // to a minimal inline creator so code can run before `js/main.js` loads.
+        function _makeInstance(input) {
+          // input may be an id or an object
+          const entry = (input && typeof input === 'object') ? input : { id: input };
+          if (typeof window !== 'undefined' && typeof window.createCardInstance === 'function') {
+            try {
+              return window.createCardInstance(entry.id || entry.cardId || entry, {
+                level: entry.level || 1,
+                xp: entry.xp || 0,
+                power: entry.power || 0
+              });
+            } catch (e) {
+              // fallback to minimal instance below
+            }
+          }
+          const _gen = (typeof window !== 'undefined' && typeof window.genUID === 'function') ? window.genUID : function(p){ return (p||'c') + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,10); };
+          return {
+            uid: entry.uid || _gen('card'),
+            cardId: entry.cardId || entry.id,
+            level: entry.level || 1,
+            xp: entry.xp || 0,
+            power: entry.power || 0
           };
-        } else {
-          inst = createCardInstance(cardEntry.id || cardEntry.cardId || cardEntry);
-          if (cardEntry.level) inst.level = cardEntry.level;
-          if (cardEntry.xp) inst.xp = cardEntry.xp;
-          if (cardEntry.power) inst.power = cardEntry.power;
         }
+
+        const inst = _makeInstance(cardEntry || (cardEntry && (cardEntry.id || cardEntry.cardId)));
 
         // Prevent duplicate cardId in deck
         if (profile.deckCards.some(dc => (dc.cardId || dc.id) === inst.cardId)) {
