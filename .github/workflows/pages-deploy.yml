@@ -1,12 +1,16 @@
-name: Deploy static site to GitHub Pages
+name: Deploy cardastika to GitHub Pages
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages-deploy-${{ github.ref }}
+      cancel-in-progress: true
     permissions:
       contents: read
       pages: write
@@ -16,19 +20,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v3
+
       - name: Upload site contents
         uses: actions/upload-pages-artifact@v1
         with:
           path: cardastika
 
-  deploy-pages:
-    needs: deploy
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      contents: read
-      id-token: write
-
-    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v1
