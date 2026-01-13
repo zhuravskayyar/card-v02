@@ -229,3 +229,25 @@ if (typeof window !== 'undefined') {
     version: '1.0.0'
   };
 }
+
+
+// === FORCE REMOVE DECK BUTTONS (GLOBAL) ===
+function forceRemoveDeckButtons(root = document) {
+  root.querySelectorAll(
+    ".card-actions, .btn-add, .btn-remove, button[data-action='add'], button[data-action='remove']"
+  ).forEach(el => el.remove());
+}
+
+// 1) після завантаження сторінки
+document.addEventListener("DOMContentLoaded", () => {
+  forceRemoveDeckButtons();
+});
+
+// 2) після будь-яких динамічних змін DOM
+const observer = new MutationObserver(() => {
+  forceRemoveDeckButtons();
+});
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});

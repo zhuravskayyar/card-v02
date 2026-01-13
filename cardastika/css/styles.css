@@ -1,0 +1,13 @@
+/* 🔴 FORCE DISABLE DECK BUTTONS (GLOBAL) */
+.card-actions,
+.card-actions *,
+.btn-add,
+.btn-remove,
+button[data-action="add"],
+button[data-action="remove"],
+button.add-to-deck,
+button.remove-from-deck {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
